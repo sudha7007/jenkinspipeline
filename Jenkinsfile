@@ -1,47 +1,50 @@
 pipeline {
     agent any
     stages {
-        stage('One') {
+        stage('build') {
                 steps {
-                        echo 'Hi, this is Ravikumar from nareshinst'
+                        echo 'Running the build...'
 			
                 }
         }
-	    stage('Two'){
+	    stage('test: integration-&-quality'){
 		    
 		steps {
 			input('Do you want to proceed?')
         }
 	    }
-        stage('Three') {
-                when {
-                        not {
-                                branch "master"
-                        }
-                }
+        stage('test: functional') {
+                
                 steps {
-			echo "Hello"
+			echo "Running the functional test..."
                         }
         }
-        stage('Four') {
+        stage('test: load-&-security') {
                 parallel {
-                        stage('Unit Test') {
+                        stage('performance Test') {
                                 steps{
-                                        echo "Running the unit test..."
+                                        echo "Running the performance test..."
                                 }
                         }
                         stage('Integration test') {
-                        agent {
-                                docker {
-        				image 'maven:3-alpine'
-        				args  '-v /tmp:/tmp'
-    					}
-			}
+                        
 				steps {
 					echo 'Running the integration test..'
 				}
                                
 			}  }
+        }
+        stage('approval') {
+                
+                steps {
+			echo "Running the approval process"
+                        }
+        }
+        stage('deploy:prod') {
+                
+                steps {
+			echo "Running the deployment in prod process"
+                        }
         }
     }
 }
